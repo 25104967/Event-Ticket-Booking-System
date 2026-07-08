@@ -1,14 +1,4 @@
 <?php
-/**
- * Authentication + Role-Based Access Control (RBAC)
- *
- * Two account families share one session shape:
- *   - Customers  -> $_SESSION['account_type'] = 'customer'
- *   - Staff      -> $_SESSION['account_type'] = 'staff', with $_SESSION['role'] = 'Admin'|'Organizer'|'Staff'
- *
- * Every gated page should call require_login() and, where relevant,
- * require_role([...]) at the very top, before any HTML is echoed.
- */
 
 require_once __DIR__ . '/../config/database.php';
 
@@ -16,27 +6,22 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/** True if someone is logged in (customer OR staff). */
 function is_logged_in(): bool {
     return isset($_SESSION['account_type']);
 }
 
-/** True if the logged-in account is a customer. */
 function is_customer(): bool {
     return is_logged_in() && $_SESSION['account_type'] === 'customer';
 }
 
-/** True if the logged-in account is any staff role. */
 function is_staff(): bool {
     return is_logged_in() && $_SESSION['account_type'] === 'staff';
 }
 
-/** Returns the current staff role name ('Admin'/'Organizer'/'Staff') or null. */
 function current_role(): ?string {
     return $_SESSION['role'] ?? null;
 }
 
-/** Redirects to login if nobody is logged in. */
 function require_login(string $redirect_to = '/login.php'): void {
     if (!is_logged_in()) {
         $_SESSION['flash_error'] = 'Please log in to continue.';
@@ -45,10 +30,6 @@ function require_login(string $redirect_to = '/login.php'): void {
     }
 }
 
-/**
- * Restricts a page to one or more staff roles.
- * Example: require_role(['Admin', 'Organizer']);
- */
 function require_role(array $allowed_roles): void {
     require_login('/staff/login.php');
     if (!is_staff() || !in_array(current_role(), $allowed_roles, true)) {
@@ -62,7 +43,6 @@ function require_role(array $allowed_roles): void {
     }
 }
 
-/** Restricts a page to logged-in customers only. */
 function require_customer(): void {
     require_login('/login.php');
     if (!is_customer()) {
@@ -73,11 +53,6 @@ function require_customer(): void {
     }
 }
 
-/**
- * Builds an absolute-from-root URL so links work regardless of subfolder
- * depth (works whether the project sits at the web root or in a subfolder,
- * e.g. http://localhost/event-ticket-system/).
- */
 function base_url(string $path = ''): string {
     $script = $_SERVER['SCRIPT_NAME'] ?? '/index.php';
     $root = $script;
@@ -86,14 +61,12 @@ function base_url(string $path = ''): string {
         if ($pos !== false) { $root = substr($script, 0, $pos); break; }
     }
     if ($root === $script) {
-        // Not inside a subfolder — use the script's own directory
         $root = rtrim(str_replace('\\', '/', dirname($script)), '/');
         if ($root === '.') $root = '';
     }
     return $root . $path;
 }
 
-/** Logs a customer in by attaching session data. */
 function login_customer(array $customer): void {
     session_regenerate_id(true);
     $_SESSION['account_type'] = 'customer';
@@ -102,7 +75,6 @@ function login_customer(array $customer): void {
     $_SESSION['user_email']   = $customer['Email_Address'];
 }
 
-/** Logs a staff member in by attaching session data. */
 function login_staff(array $staff, string $role_name): void {
     session_regenerate_id(true);
     $_SESSION['account_type'] = 'staff';
@@ -120,7 +92,6 @@ function logout(): void {
     session_destroy();
 }
 
-/** Generates and stashes a CSRF token for a form. */
 function csrf_token(): string {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -128,7 +99,6 @@ function csrf_token(): string {
     return $_SESSION['csrf_token'];
 }
 
-/** Verifies a submitted CSRF token, halting the request if it doesn't match. */
 function verify_csrf(?string $submitted): void {
     if (!$submitted || !hash_equals($_SESSION['csrf_token'] ?? '', $submitted)) {
         http_response_code(400);
@@ -136,9 +106,6 @@ function verify_csrf(?string $submitted): void {
     }
 }
 
-// ------------------------------------------------------------
-// Login rate limiting (brute-force protection)
-// ------------------------------------------------------------
 const LOGIN_MAX_ATTEMPTS = 5;
 const LOGIN_LOCKOUT_MINUTES = 15;
 
@@ -150,10 +117,6 @@ function record_login_attempt(string $identifier, string $account_type, bool $su
        ->execute([strtolower($identifier), $account_type, $ip, $success ? 1 : 0]);
 }
 
-/**
- * Returns null if login attempts are allowed, or a human-readable
- * message if the identifier is currently locked out.
- */
 function login_lockout_message(string $identifier, string $account_type): ?string {
     $db = get_db();
     $stmt = $db->prepare(
@@ -170,7 +133,6 @@ function login_lockout_message(string $identifier, string $account_type): ?strin
     return null;
 }
 
-/** Clears failed-attempt history for an identifier after a successful login. */
 function clear_login_attempts(string $identifier, string $account_type): void {
     $db = get_db();
     $db->prepare('DELETE FROM Login_Attempts WHERE Identifier = ? AND Account_Type = ?')
