@@ -1,4 +1,3 @@
-// Mobile nav toggle
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('navToggle');
   const nav = document.getElementById('mainNav');
@@ -9,12 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Auto-dismiss flash messages after a few seconds
   document.querySelectorAll('.flash').forEach((el) => {
     setTimeout(() => { el.style.transition = 'opacity .4s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 400); }, 5000);
   });
 
-  // Filter chips + search box on the events listing page (combined AND filter)
   const chips = document.querySelectorAll('.chip[data-filter]');
   const cards = document.querySelectorAll('.event-grid [data-category]');
   const searchInput = document.getElementById('eventSearch');
