@@ -4,7 +4,7 @@ USE event_ticket_system;
 
 CREATE TABLE Roles (
     Role_ID     INT AUTO_INCREMENT PRIMARY KEY,
-    Role_Name   VARCHAR(30) NOT NULL UNIQUE,        -- 'Admin', 'Organizer', 'Staff'
+    Role_Name   VARCHAR(30) NOT NULL UNIQUE,        
     Description VARCHAR(255) NULL
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE Seats (
 CREATE TABLE Events (
     Event_ID          INT AUTO_INCREMENT PRIMARY KEY,
     Venue_ID           INT NOT NULL,
-    Staff_ID            INT NOT NULL,               -- organizer who created it
+    Staff_ID            INT NOT NULL,               
     Event_Name         VARCHAR(150) NOT NULL,
     Event_Description  TEXT NULL,
     Category           VARCHAR(50) NULL,
@@ -79,7 +79,7 @@ CREATE TABLE Ticket_Tiers (
 CREATE TABLE Transactions (
     Transaction_ID              INT AUTO_INCREMENT PRIMARY KEY,
     Amount_Paid                  DECIMAL(10,2) NOT NULL,
-    Payment_Method                VARCHAR(50) NOT NULL,   -- 'GCash','Maya','DragonPay','Mock'
+    Payment_Method                VARCHAR(50) NOT NULL,   
     Transaction_Status             ENUM('pending','success','failed','refunded') NOT NULL DEFAULT 'pending',
     Transaction_Reference_Number    VARCHAR(100) NOT NULL UNIQUE,
     Transaction_Date                TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -89,7 +89,7 @@ CREATE TABLE Bookings (
     Booking_ID       INT AUTO_INCREMENT PRIMARY KEY,
     Customer_ID       INT NOT NULL,
     Tier_ID            INT NOT NULL,
-    Seat_ID             INT NULL,                     -- NULL allowed for GA (no fixed seat)
+    Seat_ID             INT NULL,                   
     Transaction_ID       INT NULL,
     Booking_Date          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Booking_Status          ENUM('pending','confirmed','cancelled','used') NOT NULL DEFAULT 'pending',
@@ -102,7 +102,7 @@ CREATE TABLE Bookings (
 CREATE TABLE QR_Code (
     QR_Code_ID     INT AUTO_INCREMENT PRIMARY KEY,
     Booking_ID      INT NOT NULL UNIQUE,
-    QR_Data          VARCHAR(255) NOT NULL UNIQUE,   -- signed reference string encoded into the QR
+    QR_Data          VARCHAR(255) NOT NULL UNIQUE,  
     Generated_At      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Expiry_Date        DATETIME NOT NULL,
     Is_Used             BOOLEAN NOT NULL DEFAULT FALSE,
