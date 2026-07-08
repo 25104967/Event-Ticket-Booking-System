@@ -109,7 +109,6 @@ function verify_csrf(?string $submitted): void {
 const LOGIN_MAX_ATTEMPTS = 5;
 const LOGIN_LOCKOUT_MINUTES = 15;
 
-/** Records a login attempt (success or failure) for rate-limiting purposes. */
 function record_login_attempt(string $identifier, string $account_type, bool $success): void {
     $db = get_db();
     $ip = $_SERVER['REMOTE_ADDR'] ?? null;
