@@ -1,9 +1,5 @@
 <?php
-/**
- * Database connection (PDO / MySQL)
- * Update the constants below to match your local MySQL setup
- * (e.g. XAMPP defaults: host=localhost, user=root, pass="")
- */
+
 
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'event_ticket_system');
