@@ -6,7 +6,7 @@ require_customer();
 $db = get_db();
 $event_id = (int)($_GET['event_id'] ?? 0);
 $tier_id  = (int)($_GET['tier_id'] ?? 0);
-$MAX_PER_CHECKOUT = 6; // cap so nobody buys out an entire tier in one go
+$MAX_PER_CHECKOUT = 6; 
 
 $stmt = $db->prepare(
     "SELECT e.*, v.Venue_Name, v.Venue_ID FROM Events e JOIN Venues v ON v.Venue_ID = e.Venue_ID
@@ -35,7 +35,6 @@ if ($tier_id) {
         $max_selectable = max(0, min($MAX_PER_CHECKOUT, $remaining));
 
         if ($requires_seat) {
-            // seats already booked (any tier) for THIS event, so one seat = one attendee per event
             $taken_stmt = $db->prepare(
                 "SELECT b.Seat_ID FROM Bookings b
                  JOIN Ticket_Tiers tt ON tt.Tier_ID = b.Tier_ID
@@ -192,7 +191,7 @@ require_once __DIR__ . '/../includes/header.php';
                   seat.classList.remove('seat-selected');
                   selected = selected.filter((s) => s !== id);
                 } else {
-                  if (selected.length >= maxSelectable) return; // cap reached
+                  if (selected.length >= maxSelectable) return; 
                   seat.classList.add('seat-selected');
                   selected.push(id);
                 }
