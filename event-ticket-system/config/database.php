@@ -1,6 +1,5 @@
 <?php
 
-
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'event_ticket_system');
 define('DB_USER', 'root');
