@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'The end time must be after the start time.';
     }
 
-    // Optional poster upload
+   
     $poster_path = $event['Poster_Image'];
     if (!empty($_FILES['poster']['name'])) {
         $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
