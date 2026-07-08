@@ -32,7 +32,7 @@ require_once __DIR__ . '/../includes/header.php';
 
     <?php if (in_array($role, ['Admin', 'Organizer'], true)): ?>
       <?php
-        // Admins see every event; Organizers see only events they created.
+        
         $params = [];
         $scope_sql = '';
         if ($role === 'Organizer') { $scope_sql = 'WHERE e.Staff_ID = ?'; $params[] = $_SESSION['staff_id']; }
