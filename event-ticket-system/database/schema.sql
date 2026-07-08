@@ -1,28 +1,13 @@
--- ============================================================
--- Event Ticket Booking System — Database Schema
--- Engine: MySQL 8.x / MariaDB 10.4+
--- Normal form: 3NF (matches Section 3.4 of the project documentation)
--- ============================================================
-
 DROP DATABASE IF EXISTS event_ticket_system;
 CREATE DATABASE event_ticket_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE event_ticket_system;
 
--- ------------------------------------------------------------
--- ROLES
--- Defines account types and, indirectly, what each account can
--- access. Application code checks role_name to gate features
--- (see includes/auth.php -> require_role()).
--- ------------------------------------------------------------
 CREATE TABLE Roles (
     Role_ID     INT AUTO_INCREMENT PRIMARY KEY,
     Role_Name   VARCHAR(30) NOT NULL UNIQUE,        -- 'Admin', 'Organizer', 'Staff'
     Description VARCHAR(255) NULL
 );
 
--- ------------------------------------------------------------
--- STAFF  (internal accounts: Admin / Organizer / Staff)
--- ------------------------------------------------------------
 CREATE TABLE Staff (
     Staff_ID       INT AUTO_INCREMENT PRIMARY KEY,
     Staff_User     VARCHAR(50)  NOT NULL UNIQUE,
@@ -36,9 +21,6 @@ CREATE TABLE Staff (
     FOREIGN KEY (Role_ID) REFERENCES Roles(Role_ID)
 );
 
--- ------------------------------------------------------------
--- CUSTOMERS  (public accounts that browse & book tickets)
--- ------------------------------------------------------------
 CREATE TABLE Customers (
     Customer_ID    INT AUTO_INCREMENT PRIMARY KEY,
     Customer_User  VARCHAR(50)  NOT NULL UNIQUE,
@@ -51,9 +33,6 @@ CREATE TABLE Customers (
     Created_At     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ------------------------------------------------------------
--- VENUES
--- ------------------------------------------------------------
 CREATE TABLE Venues (
     Venue_ID     INT AUTO_INCREMENT PRIMARY KEY,
     Venue_Name   VARCHAR(150) NOT NULL,
@@ -61,12 +40,6 @@ CREATE TABLE Venues (
     Max_Capacity INT NOT NULL
 );
 
--- ------------------------------------------------------------
--- SEATS  (fixed seat map that belongs to a venue)
--- Per-event availability is derived from active Bookings, not
--- stored redundantly here — Is_Available reflects only whether
--- the physical seat exists/is usable in the venue.
--- ------------------------------------------------------------
 CREATE TABLE Seats (
     Seat_ID      INT AUTO_INCREMENT PRIMARY KEY,
     Venue_ID     INT NOT NULL,
@@ -77,9 +50,6 @@ CREATE TABLE Seats (
     UNIQUE KEY unique_seat (Venue_ID, Seat_Row, Seat_Number)
 );
 
--- ------------------------------------------------------------
--- EVENTS
--- ------------------------------------------------------------
 CREATE TABLE Events (
     Event_ID          INT AUTO_INCREMENT PRIMARY KEY,
     Venue_ID           INT NOT NULL,
@@ -96,9 +66,6 @@ CREATE TABLE Events (
     FOREIGN KEY (Staff_ID) REFERENCES Staff(Staff_ID)
 );
 
--- ------------------------------------------------------------
--- TICKET TIERS  (VIP / General Admission / etc. per event)
--- ------------------------------------------------------------
 CREATE TABLE Ticket_Tiers (
     Tier_ID             INT AUTO_INCREMENT PRIMARY KEY,
     Event_ID            INT NOT NULL,
@@ -109,9 +76,6 @@ CREATE TABLE Ticket_Tiers (
     FOREIGN KEY (Event_ID) REFERENCES Events(Event_ID) ON DELETE CASCADE
 );
 
--- ------------------------------------------------------------
--- TRANSACTIONS  (payment records — created first, then linked)
--- ------------------------------------------------------------
 CREATE TABLE Transactions (
     Transaction_ID              INT AUTO_INCREMENT PRIMARY KEY,
     Amount_Paid                  DECIMAL(10,2) NOT NULL,
@@ -121,9 +85,6 @@ CREATE TABLE Transactions (
     Transaction_Date                TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ------------------------------------------------------------
--- BOOKINGS
--- ------------------------------------------------------------
 CREATE TABLE Bookings (
     Booking_ID       INT AUTO_INCREMENT PRIMARY KEY,
     Customer_ID       INT NOT NULL,
@@ -138,9 +99,6 @@ CREATE TABLE Bookings (
     FOREIGN KEY (Transaction_ID) REFERENCES Transactions(Transaction_ID)
 );
 
--- ------------------------------------------------------------
--- QR CODE  (one per confirmed booking — used at the door)
--- ------------------------------------------------------------
 CREATE TABLE QR_Code (
     QR_Code_ID     INT AUTO_INCREMENT PRIMARY KEY,
     Booking_ID      INT NOT NULL UNIQUE,
@@ -151,12 +109,6 @@ CREATE TABLE QR_Code (
     FOREIGN KEY (Booking_ID) REFERENCES Bookings(Booking_ID) ON DELETE CASCADE
 );
 
--- ------------------------------------------------------------
--- PASSWORD RESETS
--- Supports "forgot password" for both Customers and Staff via one
--- table. Only the SHA-256 hash of the token is stored, never the
--- raw token (same principle as never storing plaintext passwords).
--- ------------------------------------------------------------
 CREATE TABLE Password_Resets (
     Reset_ID     INT AUTO_INCREMENT PRIMARY KEY,
     Account_Type ENUM('customer','staff') NOT NULL,
@@ -167,19 +119,11 @@ CREATE TABLE Password_Resets (
     Created_At   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ------------------------------------------------------------
--- Helpful indexes for the real-time availability queries
--- ------------------------------------------------------------
 CREATE INDEX idx_events_start ON Events(Start_Date_Time);
 CREATE INDEX idx_bookings_status ON Bookings(Booking_Status);
 CREATE INDEX idx_bookings_tier ON Bookings(Tier_ID);
 CREATE INDEX idx_bookings_seat ON Bookings(Seat_ID);
 
--- ------------------------------------------------------------
--- LOGIN ATTEMPTS  (brute-force / rate-limiting protection)
--- One row per attempt; the app counts recent failures per
--- identifier (username/email) to decide whether to lock out.
--- ------------------------------------------------------------
 CREATE TABLE Login_Attempts (
     Attempt_ID   INT AUTO_INCREMENT PRIMARY KEY,
     Identifier   VARCHAR(100) NOT NULL,
