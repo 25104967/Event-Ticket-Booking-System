@@ -87,7 +87,7 @@ require_once __DIR__ . '/../includes/header.php';
     <div class="panel">
       <h3 style="font-size:1.1rem;">Current tiers</h3>
       <?php if (!$tiers): ?>
-        <p>No tiers yet — add your first one below. Name a tier containing the word "Reserved" (e.g. "VIP (Reserved Seating)") to enable seat-map selection for it.</p>
+        <p>No tiers yet, add your first one below. Name a tier containing the word "Reserved" (e.g. "VIP (Reserved Seating)") to enable seat-map selection for it.</p>
       <?php else: ?>
         <table class="data-table">
           <thead><tr><th>Tier</th><th>Price</th><th>Available</th><th>Sold</th><th>Remaining</th><th></th></tr></thead>
