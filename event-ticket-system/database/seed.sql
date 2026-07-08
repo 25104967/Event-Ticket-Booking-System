@@ -8,13 +8,13 @@ INSERT INTO Roles (Role_Name, Description) VALUES
 
 
 INSERT INTO Staff (Staff_User, Password_Hash, First_Name, Last_Name, Email, Role_ID) VALUES
-('admin',      '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Andrea',  'Reyes',   'admin@ticketstub.test', 1),
-('organizer1', '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Marco',   'Dela Cruz','organizer@ticketstub.test', 2),
-('staff1',     '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Bea',     'Santos',  'staff@ticketstub.test', 3);
+('admin',      '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Andrea',  'Reyes',   'admin@ticketstub.com', 1),
+('organizer1', '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Marco',   'Dela Cruz','organizer@ticketstub.com', 2),
+('staff1',     '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Bea',     'Santos',  'staff@ticketstub.com', 3);
 
 
 INSERT INTO Customers (Customer_User, Password_Hash, First_Name, Last_Name, Email_Address, Phone_Number) VALUES
-('juandelacruz', '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Juan', 'Dela Cruz', 'juan@example.com', '09171234567');
+('juandelacruz', '$2y$10$R9mbP3y0TzCtWtWPWpa83Ox1EqGPDetPDGPlkr7q06qUIQum81bX2', 'Juan', 'Dela Cruz', 'juan@gmail.com', '09171234567');
 
 
 INSERT INTO Venues (Venue_Name, Address, Max_Capacity) VALUES
