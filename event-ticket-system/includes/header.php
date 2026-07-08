@@ -1,8 +1,5 @@
 <?php
-/**
- * Shared header. Expects optional $page_title to be set before include.
- * Requires includes/auth.php and includes/functions.php already loaded.
- */
+
 $page_title = $page_title ?? 'TicketStub — Book your night out';
 ?>
 <!DOCTYPE html>
