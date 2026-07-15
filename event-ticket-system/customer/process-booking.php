@@ -23,7 +23,7 @@ if (!$tier) {
 
 $requires_seat = (stripos($tier['Tier_Name'], 'reserved') !== false);
 
-// Build the list of "units" to book: either one per selected seat, or `quantity` GA units (seat = null)
+
 $seat_ids = [];
 if ($requires_seat) {
     $seat_ids = array_map('intval', $_POST['seat_ids'] ?? []);
@@ -44,13 +44,13 @@ if ($requires_seat) {
 try {
     $db->beginTransaction();
 
-    // Re-check availability inside the transaction to prevent race conditions / overbooking.
+  
     if (tier_remaining($db, $tier_id) < $quantity) {
         throw new RuntimeException('Only ' . tier_remaining($db, $tier_id) . ' left in this tier now — please adjust your order.');
     }
 
     if ($requires_seat) {
-        // Lock and verify every requested seat is still free for this event
+        
         $placeholders = implode(',', array_fill(0, count($seat_ids), '?'));
         $check = $db->prepare(
             "SELECT b.Seat_ID FROM Bookings b
@@ -64,14 +64,11 @@ try {
         }
     }
 
-    // 1) Create ONE transaction covering the whole order (one receipt, multiple tickets)
+    
     $total_amount = (float)$tier['Price'] * $quantity;
     $payment_method = $_POST['payment_method'] ?? 'Mock';
     $reference = generate_reference('PAY');
-    // -----------------------------------------------------------------
-    // INTEGRATION POINT: swap this block for a real call to your payment
-    // gateway (GCash / Maya / DragonPay) per Section 3.9 of the docs.
-    // -----------------------------------------------------------------
+
     $insert_txn = $db->prepare(
         'INSERT INTO Transactions (Amount_Paid, Payment_Method, Transaction_Status, Transaction_Reference_Number)
          VALUES (?,?,?,?)'
@@ -79,7 +76,7 @@ try {
     $insert_txn->execute([$total_amount, $payment_method, 'success', $reference]);
     $transaction_id = (int)$db->lastInsertId();
 
-    // 2) Create one Booking + one QR_Code per ticket, all linked to that transaction
+   
     $event_end_stmt = $db->prepare('SELECT End_Date_Time, Event_Name FROM Events WHERE Event_ID = ?');
     $event_end_stmt->execute([$event_id]);
     $event_row = $event_end_stmt->fetch();
@@ -116,7 +113,7 @@ try {
         ];
     }
 
-    // 3) Bump the sold counter
+    
     $db->prepare('UPDATE Ticket_Tiers SET Quantity_Sold = Quantity_Sold + ? WHERE Tier_ID = ?')->execute([$quantity, $tier_id]);
 
     $db->commit();
