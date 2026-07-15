@@ -63,7 +63,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
       </form>
       <p style="margin-top:14px; font-size:0.82rem;"><a href="<?= base_url('/forgot-password.php') ?>" style="color:var(--text-muted);">Forgot your password?</a></p>
-      <p style="margin-top:20px; font-size:0.78rem;">Demo account — user: <b style="color:var(--text)">juandelacruz</b> · pass: <b style="color:var(--text)">Password123!</b></p>
+      
       <p style="font-size:0.78rem;">Staff / organizer / admin? <a href="<?= base_url('/staff/login.php') ?>" style="color:var(--violet); font-weight:600;">Log in here</a></p>
     </div>
   </div>
