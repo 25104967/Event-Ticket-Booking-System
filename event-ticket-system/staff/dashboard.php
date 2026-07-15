@@ -6,7 +6,7 @@ require_role(['Admin', 'Organizer', 'Staff']); // any internal account may view 
 $db = get_db();
 $role = current_role();
 
-$page_title = 'Dashboard — TicketStub';
+$page_title = 'Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -15,7 +15,7 @@ require_once __DIR__ . '/../includes/header.php';
     <div class="section-head">
       <div>
         <h2>Welcome, <?= e($_SESSION['user_name']) ?></h2>
-        <p>Signed in as <b style="color:var(--violet);"><?= e($role) ?></b> — this dashboard only shows what your role is allowed to see.</p>
+        <p>Signed in as <b style="color:var(--violet);"><?= e($role) ?></b></p>
       </div>
     </div>
 
