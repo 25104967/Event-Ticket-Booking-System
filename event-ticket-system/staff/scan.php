@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/functions.php';
 require_role(['Admin', 'Organizer', 'Staff']);
 
 $db = get_db();
-$result = null; // ['type' => 'success'|'error'|'warning', 'message' => ..., 'ticket' => [...]]
+$result = null; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf($_POST['csrf_token'] ?? null);
@@ -116,7 +116,7 @@ require_once __DIR__ . '/../includes/header.php';
             stopCamera();
             form.submit();
           },
-          () => { /* ignore per-frame scan misses */ }
+          () => { }
         );
         running = true;
         toggleBtn.textContent = '✕ Stop camera';
