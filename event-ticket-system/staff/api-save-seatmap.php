@@ -26,7 +26,7 @@ if (!$stmt->fetch()) {
     exit;
 }
 
-// Seats with an active booking anywhere can never be deleted or renumbered.
+
 $locked_stmt = $db->prepare(
     "SELECT DISTINCT s.Seat_ID
      FROM Seats s
@@ -37,8 +37,7 @@ $locked_stmt->execute([$venue_id]);
 $locked_ids = array_column($locked_stmt->fetchAll(), 'Seat_ID');
 $locked_set = array_flip($locked_ids);
 
-// Existing seats, keyed by Seat_ID, so we know each locked seat's real Row/Number
-// (client payload is never trusted for locked seats).
+
 $existing_stmt = $db->prepare('SELECT * FROM Seats WHERE Venue_ID = ?');
 $existing_stmt->execute([$venue_id]);
 $existing_by_id = [];
@@ -52,7 +51,7 @@ $warning = null;
 try {
     $db->beginTransaction();
 
-    // 1) Delete any existing seat that's gone from the new layout — but never a locked one.
+   
     $to_delete = [];
     foreach (array_keys($existing_by_id) as $seat_id) {
         if (!in_array($seat_id, $incoming_ids, true) && !isset($locked_set[$seat_id])) {
@@ -64,9 +63,7 @@ try {
         $db->prepare("DELETE FROM Seats WHERE Seat_ID IN ($placeholders)")->execute($to_delete);
     }
 
-    // 2) Pass A — move every existing, non-locked seat we're about to update to a
-    //    temporary unique Row/Number so the final renumbering pass never collides
-    //    with the unique_seat (Venue_ID, Seat_Row, Seat_Number) constraint.
+  
     $temp_stmt = $db->prepare('UPDATE Seats SET Seat_Row = ?, Seat_Number = ? WHERE Seat_ID = ?');
     foreach ($incoming as $s) {
         $seat_id = !empty($s['seat_id']) ? (int)$s['seat_id'] : null;
@@ -75,9 +72,7 @@ try {
         }
     }
 
-    // 3) Pass B — insert new seats / apply final positions for non-locked seats.
-    //    Locked seats keep their original Seat_Row/Seat_Number no matter what the
-    //    client sent; only their cosmetic Pos_X/Pos_Y/Section_Label may change.
+ 
     $insert_stmt = $db->prepare(
         'INSERT INTO Seats (Venue_ID, Seat_Row, Seat_Number, Section_Label, Pos_X, Pos_Y) VALUES (?,?,?,?,?,?)'
     );
@@ -118,12 +113,7 @@ try {
         $warning = "$locked_touched locked seat(s) kept their original seat label since they already have bookings.";
     }
 
-    // A locked seat is NEVER deleted even if the client omitted it from the
-    // payload entirely (e.g. stale UI state, or a direct API call) — step 1
-    // already guaranteed that. So the response must reflect the *actual*
-    // final table, not just what happened to be in the incoming payload,
-    // or an admin could be told "0 seats saved" while a booked seat is
-    // silently still sitting in the database untouched.
+ 
     $omitted_locked = array_diff($locked_ids, $incoming_ids);
     if ($omitted_locked) {
         $locked_touched += count($omitted_locked);
