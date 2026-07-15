@@ -17,8 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         $_SESSION['flash_error'] = "This venue can't be deleted — it still has $event_count event(s) using it. Remove or reassign those events first.";
     } else {
         try {
-            // Seats cascade-delete automatically (Seats.Venue_ID ON DELETE CASCADE).
-            // No events reference this venue (checked above), so this is always safe.
+           
             $db->prepare('DELETE FROM Venues WHERE Venue_ID = ?')->execute([$del_id]);
             $_SESSION['flash_success'] = 'Venue deleted.';
         } catch (Throwable $e) {
