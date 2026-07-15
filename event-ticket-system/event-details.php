@@ -17,7 +17,7 @@ $event = $stmt->fetch();
 
 if (!$event) {
     http_response_code(404);
-    $page_title = 'Event not found — TicketStub';
+    $page_title = 'Event not found';
     require_once __DIR__ . '/includes/header.php';
     echo '<div class="empty-state"><h2>Event not found</h2><p>This event may have been removed or the link is incorrect.</p><a class="btn btn-primary" href="' . base_url('/index.php') . '">Browse events</a></div>';
     require_once __DIR__ . '/includes/footer.php';
@@ -51,7 +51,7 @@ require_once __DIR__ . '/includes/header.php';
           <h3 style="font-size:1.1rem;">Event details</h3>
           <div class="ticket-meta" style="font-size:0.95rem; gap:10px;">
             <span>🗓 <?= format_date_range($event['Start_Date_Time'], $event['End_Date_Time']) ?></span>
-            <span>📍 <?= e($event['Venue_Name']) ?> — <?= e($event['Address']) ?></span>
+            <span>📍 <?= e($event['Venue_Name']) ?>  <?= e($event['Address']) ?></span>
             <span>👤 Organized by <?= e($event['Organizer_First'] . ' ' . $event['Organizer_Last']) ?></span>
             <span>🎫 Venue capacity: <?= (int)$event['Max_Capacity'] ?></span>
           </div>
