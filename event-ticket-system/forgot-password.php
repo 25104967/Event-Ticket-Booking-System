@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$page_title = 'Forgot Password — TicketStub';
+$page_title = 'Forgot Password';
 require_once __DIR__ . '/includes/header.php';
 ?>
 
