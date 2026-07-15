@@ -16,8 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$email]);
     $customer = $stmt->fetch();
 
-    // Always show the same "check your email" message whether or not the
-    // account exists — this prevents leaking which emails are registered.
+    
     $submitted = true;
 
     if ($customer && $customer['Account_Status'] === 'active') {
