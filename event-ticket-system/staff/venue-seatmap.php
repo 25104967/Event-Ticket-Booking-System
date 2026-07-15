@@ -15,7 +15,6 @@ $seats_stmt = $db->prepare('SELECT * FROM Seats WHERE Venue_ID = ? ORDER BY Pos_
 $seats_stmt->execute([$venue_id]);
 $existing_seats = $seats_stmt->fetchAll();
 
-// Seats with an active booking anywhere can never be removed or renumbered from the builder.
 $locked_stmt = $db->prepare(
     "SELECT DISTINCT s.Seat_ID
      FROM Seats s
@@ -93,13 +92,12 @@ require_once __DIR__ . '/../includes/header.php';
   const saveMsg = document.getElementById('saveMsg');
 
   function rowLabel(index) {
-    // 0->A, 1->B ... 25->Z, 26->AA, matches spreadsheet-style column naming
+    
     let n = index, s = '';
     do { s = String.fromCharCode(65 + (n % 26)) + s; n = Math.floor(n / 26) - 1; } while (n >= 0);
     return s;
   }
 
-  // cells[y][x] = { active, section, locked, seatId }
   let cells = [];
   let rows = 0, cols = 0;
 
@@ -110,7 +108,6 @@ require_once __DIR__ . '/../includes/header.php';
       rows = parseInt(rowsInput.value, 10) || 4;
       cols = parseInt(colsInput.value, 10) || 10;
       cells = Array.from({ length: rows }, () => Array.from({ length: cols }, blankCell));
-      // default: fill everything as seats to start from a full grid
       cells.forEach((r) => r.forEach((c) => { c.active = true; }));
       return;
     }
@@ -200,7 +197,7 @@ require_once __DIR__ . '/../includes/header.php';
 
   function onCellClick(y, x) {
     const cell = cells[y][x];
-    if (cell.locked) return; // never editable
+    if (cell.locked) return; 
     const mode = modeBtn.dataset.mode;
     if (mode === 'toggle') {
       cell.active = !cell.active;
@@ -246,7 +243,7 @@ require_once __DIR__ . '/../includes/header.php';
       } else {
         saveMsg.className = 'flash flash-success';
         saveMsg.textContent = 'Seat map saved — ' + data.seat_count + ' seats.' + (data.warning ? ' ' + data.warning : '');
-        // refresh seat IDs so a second save in the same session works cleanly
+    
         data.seats.forEach((s) => { cells[s.Pos_Y][s.Pos_X].seatId = s.Seat_ID; });
       }
     } catch (e) {
