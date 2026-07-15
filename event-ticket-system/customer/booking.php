@@ -6,7 +6,7 @@ require_customer();
 $db = get_db();
 $event_id = (int)($_GET['event_id'] ?? 0);
 $tier_id  = (int)($_GET['tier_id'] ?? 0);
-$MAX_PER_CHECKOUT = 6; // cap so nobody buys out an entire tier in one go
+$MAX_PER_CHECKOUT = 6; 
 
 $stmt = $db->prepare(
     "SELECT e.*, v.Venue_Name, v.Venue_ID FROM Events e JOIN Venues v ON v.Venue_ID = e.Venue_ID
@@ -36,7 +36,7 @@ if ($tier_id) {
         $max_selectable = max(0, min($MAX_PER_CHECKOUT, $remaining));
 
         if ($requires_seat) {
-            // seats already booked (any tier) for THIS event, so one seat = one attendee per event
+           
             $taken_stmt = $db->prepare(
                 "SELECT b.Seat_ID FROM Bookings b
                  JOIN Ticket_Tiers tt ON tt.Tier_ID = b.Tier_ID
@@ -70,7 +70,7 @@ require_once __DIR__ . '/../includes/header.php';
     <h2><?= $selected_tier ? ($requires_seat ? 'Pick your seats' : 'Choose your quantity') : 'Choose your ticket tier' ?></h2>
 
     <?php if (!$selected_tier): ?>
-      <p>Step 1 of 2 — select a tier below.</p>
+      <p>Step 1/2 select a tier below.</p>
       <div class="panel">
         <?php foreach ($tiers as $t): $tier_left = tier_remaining($db, $t['Tier_ID']); ?>
           <a class="tier-option" style="text-decoration:none; <?= $tier_left <= 0 ? 'opacity:0.5; pointer-events:none;' : '' ?>"
@@ -92,7 +92,7 @@ require_once __DIR__ . '/../includes/header.php';
       </div>
 
     <?php else: ?>
-      <p>Step 2 of 2 — <?= $requires_seat ? 'tap up to ' . $max_selectable . ' open seats, then confirm.' : 'choose how many tickets, then confirm.' ?></p>
+      <p>Step 2/2 — <?= $requires_seat ? 'tap up to ' . $max_selectable . ' open seats, then confirm.' : 'choose how many tickets, then confirm.' ?></p>
 
       <form method="post" action="<?= base_url('/customer/process-booking.php') ?>" id="bookingForm">
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
