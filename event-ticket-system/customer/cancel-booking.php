@@ -38,7 +38,7 @@ try {
     $db->beginTransaction();
     $db->prepare("UPDATE Bookings SET Booking_Status = 'cancelled' WHERE Booking_ID = ?")->execute([$booking_id]);
     $db->prepare('UPDATE Ticket_Tiers SET Quantity_Sold = GREATEST(0, Quantity_Sold - 1) WHERE Tier_ID = ?')->execute([$booking['Tier_ID']]);
-    // Invalidate the QR code so it can never be scanned in, even though Booking_Status already blocks it.
+    
     $db->prepare('UPDATE QR_Code SET Is_Used = 1 WHERE Booking_ID = ?')->execute([$booking_id]);
     $db->commit();
     $_SESSION['flash_success'] = 'Your booking for "' . $booking['Event_Name'] . '" has been cancelled.';
