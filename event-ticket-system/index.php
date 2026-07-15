@@ -15,7 +15,7 @@ $events = $db->query(
 $categories = array_values(array_unique(array_filter(array_column($events, 'Category'))));
 $total_events = count($events);
 
-$page_title = 'TicketStub — Book your night out';
+$page_title = 'TicketStub';
 require_once __DIR__ . '/includes/header.php';
 ?>
 
