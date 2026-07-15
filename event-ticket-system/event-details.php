@@ -60,7 +60,7 @@ require_once __DIR__ . '/includes/header.php';
 
       <div class="panel" style="position:sticky; top:96px;">
         <h3>Select your tickets</h3>
-        <p style="margin-bottom:18px;">Prices shown are per ticket. Availability updates in real time.</p>
+        <p style="margin-bottom:18px;"></p>
         <?php if (!$tiers): ?>
           <p>Ticket tiers for this event have not been published yet.</p>
         <?php else: ?>
