@@ -1,7 +1,4 @@
--- Run this ONLY if you already imported schema.sql before password reset
--- support was added, and don't want to drop your existing database.
--- (If you're setting up fresh, schema.sql already includes this table —
--- you don't need to run this file.)
+
 
 USE event_ticket_system;
 
