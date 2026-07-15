@@ -10,7 +10,7 @@ $errors = [];
 $done = false;
 
 if (!$token || !$reset) {
-    $page_title = 'Reset Password — TicketStub';
+    $page_title = 'Reset Password';
     require_once __DIR__ . '/includes/header.php';
     ?>
     <section class="section">
